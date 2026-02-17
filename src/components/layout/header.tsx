@@ -9,9 +9,11 @@ import { createClient } from "@/lib/supabase/server";
  */
 export default async function Header() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user = null;
+  if (supabase) {
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur-sm">

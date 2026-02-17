@@ -18,20 +18,26 @@ import { createClient } from "@supabase/supabase-js";
  * ╚══════════════════════════════════════════════════════════════╝
  */
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+/**
+ * Lazy-initialized admin client.
+ * Throws only when actually called, not at module load time.
+ * This prevents build/deploy crashes when env vars aren't set yet.
+ */
+export function getSupabaseAdmin() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-// Fail fast if server-only vars are missing — prevents silent misconfiguration
-if (!supabaseUrl || !serviceRoleKey) {
-  throw new Error(
-    "Missing SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_URL. " +
-      "Ensure these are set in .env.local (local) or Vercel Environment Variables (production)."
-  );
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error(
+      "Missing SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_URL. " +
+        "Ensure these are set in .env.local (local) or Vercel Environment Variables (production)."
+    );
+  }
+
+  return createClient(supabaseUrl, serviceRoleKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
 }
-
-export const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-});
