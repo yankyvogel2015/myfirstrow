@@ -53,11 +53,10 @@ function LoginForm() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-6">
-      <div className="w-full max-w-sm">
-        {/* Error message */}
-        {error === "access_denied" && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-center">
+    <div className="w-full max-w-sm px-6">
+      {/* Error message */}
+      {error === "access_denied" && (
+        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-center">
             <p className="text-sm font-medium text-red-800">Access restricted</p>
             <p className="mt-1 text-xs text-red-600">
               This application is currently in private development. Only
@@ -78,11 +77,8 @@ function LoginForm() {
 
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-            Sign in
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Access your MyFirstRow account
+          <p className="text-sm text-muted-foreground">
+            Sign in to continue
           </p>
         </div>
 
@@ -122,7 +118,6 @@ function LoginForm() {
         <p className="mt-8 text-center text-xs text-muted-foreground">
           By signing in, you agree to our Terms of Service and Privacy Policy.
         </p>
-      </div>
     </div>
   );
 }
