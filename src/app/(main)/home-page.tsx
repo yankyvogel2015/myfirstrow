@@ -5,28 +5,28 @@ export default function HomePage() {
   return (
     <div>
       {/* Hero */}
-      <section className="mx-auto max-w-6xl px-6 pb-24 pt-20">
-        <div className="max-w-2xl">
+      <section className="mx-auto max-w-6xl px-6 pb-24 pt-24">
+        <div className="mx-auto max-w-2xl text-center">
           <h1 className="text-4xl font-semibold leading-tight tracking-tight text-foreground sm:text-5xl">
             Event data infrastructure
             <br />
             <span className="text-muted-foreground">you can rely on.</span>
           </h1>
-          <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
+          <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
             Access real-time Ticketmaster inventory, pricing, and availability
             through a clean, well-documented API. Built for developers and
             businesses who need accurate data at scale.
           </p>
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               href="/login"
-              className="inline-flex h-11 items-center justify-center rounded-lg bg-accent px-6 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
+              className="inline-flex h-11 items-center justify-center rounded-lg bg-accent px-8 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
             >
               Get started
             </Link>
             <Link
               href="/docs"
-              className="inline-flex h-11 items-center justify-center rounded-lg border border-border px-6 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+              className="inline-flex h-11 items-center justify-center rounded-lg border border-border px-8 text-sm font-medium text-foreground transition-colors hover:bg-muted"
             >
               Read the docs
             </Link>
@@ -37,7 +37,7 @@ export default function HomePage() {
       {/* Features */}
       <section className="border-t border-border bg-card">
         <div className="mx-auto max-w-6xl px-6 py-24">
-          <div className="max-w-lg">
+          <div className="mx-auto max-w-lg text-center">
             <h2 className="text-2xl font-semibold tracking-tight text-foreground">
               Built for production
             </h2>
@@ -47,8 +47,8 @@ export default function HomePage() {
           </div>
 
           <div className="mt-16 grid grid-cols-1 gap-12 md:grid-cols-3">
-            <div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-background">
+            <div className="text-center">
+              <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-background">
                 <svg className="h-5 w-5 text-foreground" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
                 </svg>
@@ -62,8 +62,8 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-background">
+            <div className="text-center">
+              <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-background">
                 <svg className="h-5 w-5 text-foreground" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
                 </svg>
@@ -77,8 +77,8 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-background">
+            <div className="text-center">
+              <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-background">
                 <svg className="h-5 w-5 text-foreground" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
                 </svg>
@@ -98,7 +98,7 @@ export default function HomePage() {
       {/* How it works */}
       <section className="border-t border-border">
         <div className="mx-auto max-w-6xl px-6 py-24">
-          <div className="max-w-lg">
+          <div className="mx-auto max-w-lg text-center">
             <h2 className="text-2xl font-semibold tracking-tight text-foreground">
               How it works
             </h2>
@@ -147,7 +147,7 @@ export default function HomePage() {
       {/* Pricing preview */}
       <section className="border-t border-border bg-card">
         <div className="mx-auto max-w-6xl px-6 py-24">
-          <div className="max-w-lg">
+          <div className="mx-auto max-w-lg text-center">
             <h2 className="text-2xl font-semibold tracking-tight text-foreground">
               Simple, transparent pricing
             </h2>

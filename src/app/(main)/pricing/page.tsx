@@ -3,20 +3,24 @@ import { PLANS } from "@/lib/constants";
 
 export default function PricingPage() {
   return (
-    <div className="mx-auto max-w-6xl px-6 py-24">
+    <div>
       {/* Header */}
-      <div className="max-w-2xl">
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-          Pricing
-        </h1>
-        <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-          Start free. Upgrade when your needs grow. Every plan includes access
-          to our core API with no hidden fees.
-        </p>
-      </div>
+      <section className="mx-auto max-w-6xl px-6 pb-20 pt-24">
+        <div className="mx-auto max-w-2xl text-center">
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            Pricing
+          </h1>
+          <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground">
+            Start free. Upgrade when your needs grow. Every plan includes access
+            to our core API with no hidden fees.
+          </p>
+        </div>
+      </section>
 
       {/* Plans */}
-      <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3">
+      <section className="border-t border-border bg-card">
+      <div className="mx-auto max-w-6xl px-6 py-24">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {PLANS.map((plan) => (
           <div
             key={plan.id}
@@ -86,12 +90,17 @@ export default function PricingPage() {
           </div>
         ))}
       </div>
+      </div>
+      </section>
 
       {/* FAQ */}
-      <div className="mt-24 border-t border-border pt-20">
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">
-          Frequently asked questions
-        </h2>
+      <section className="border-t border-border">
+      <div className="mx-auto max-w-6xl px-6 py-24">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+            Frequently asked questions
+          </h2>
+        </div>
         <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2">
           {[
             {
@@ -122,6 +131,7 @@ export default function PricingPage() {
           ))}
         </div>
       </div>
+      </section>
     </div>
   );
 }
