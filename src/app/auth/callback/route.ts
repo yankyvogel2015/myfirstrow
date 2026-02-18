@@ -29,6 +29,28 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
+      // --- EMAIL ALLOWLIST (development only) ---
+      // If ALLOWED_EMAILS is set, only those emails can log in.
+      // Remove the env var or leave it empty to allow all users.
+      const allowedEmails = process.env.ALLOWED_EMAILS;
+      if (allowedEmails) {
+        const allowlist = allowedEmails
+          .split(",")
+          .map((e) => e.trim().toLowerCase());
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (!user?.email || !allowlist.includes(user.email.toLowerCase())) {
+          // Not on the allowlist — sign them out and reject
+          await supabase.auth.signOut();
+          return NextResponse.redirect(
+            `${origin}/login?error=access_denied`
+          );
+        }
+      }
+      // --- END ALLOWLIST ---
+
       // Construct absolute URL for redirect
       const forwardedHost = request.headers.get("x-forwarded-host");
       const isLocalEnv = process.env.NODE_ENV === "development";

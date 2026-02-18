@@ -1,45 +1,19 @@
-import { NextResponse } from "next/server";
+import { updateSession } from "@/lib/supabase/middleware";
 import type { NextRequest } from "next/server";
 
 /**
- * MAINTENANCE MODE — Site is offline.
- * Remove this block and restore the auth middleware when ready to go live.
+ * Next.js Middleware — runs on the Edge before every matched request.
+ *
+ * Responsibilities:
+ * 1. Refresh Supabase auth session (cookie rotation)
+ * 2. Redirect unauthenticated users from protected routes
+ * 3. Redirect authenticated users away from /login
+ *
+ * SECURITY: This is the first line of defense for route protection.
+ * It runs before any Server Component or Route Handler.
  */
-export function middleware(request: NextRequest) {
-  // Allow Next.js internals through
-  if (request.nextUrl.pathname.startsWith("/_next")) {
-    return NextResponse.next();
-  }
-
-  return new NextResponse(
-    `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MyFirstRow</title>
-  <style>
-    body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fafaf9; color: #1c1917; }
-    .container { text-align: center; padding: 2rem; }
-    h1 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.025em; }
-    p { color: #78716c; font-size: 0.875rem; margin-top: 0.5rem; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>MyFirstRow</h1>
-    <p>Coming soon.</p>
-  </div>
-</body>
-</html>`,
-    {
-      status: 200,
-      headers: {
-        "Content-Type": "text/html; charset=utf-8",
-        "X-Robots-Tag": "noindex, nofollow",
-      },
-    }
-  );
+export async function middleware(request: NextRequest) {
+  return await updateSession(request);
 }
 
 export const config = {

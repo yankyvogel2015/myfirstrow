@@ -1,6 +1,8 @@
 "use client";
 
 import { createBrowserClient } from "@supabase/ssr";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 /**
  * Login page — Client Component (needs browser interaction for OAuth redirect).
@@ -9,30 +11,71 @@ import { createBrowserClient } from "@supabase/ssr";
  * - Uses only the anon key (public, RLS-protected)
  * - Initiates PKCE flow — authorization code is exchanged server-side in /auth/callback
  * - No tokens are stored in localStorage or sessionStorage
+ * - During development, only allowlisted emails can log in (enforced server-side)
  */
 
-export default function LoginPage() {
-  const handleGoogleLogin = async () => {
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+function LoginForm() {
+  const searchParams = useSearchParams();
+  const error = searchParams.get("error");
 
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-        queryParams: {
-          access_type: "offline",
-          prompt: "consent",
+  const handleGoogleLogin = async () => {
+    try {
+      const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      if (!url || !key) {
+        console.error("Supabase env vars not available on client.");
+        alert("Configuration error — please contact the administrator.");
+        return;
+      }
+
+      const supabase = createBrowserClient(url, key);
+
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
         },
-      },
-    });
+      });
+
+      if (oauthError) {
+        console.error("OAuth error:", oauthError.message);
+        alert("Failed to start sign in. Please try again.");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      alert("Something went wrong. Please try again.");
+    }
   };
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-6">
       <div className="w-full max-w-sm">
+        {/* Error message */}
+        {error === "access_denied" && (
+          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-center">
+            <p className="text-sm font-medium text-red-800">Access restricted</p>
+            <p className="mt-1 text-xs text-red-600">
+              This application is currently in private development. Only
+              authorized accounts can sign in.
+            </p>
+          </div>
+        )}
+        {error === "auth_failed" && (
+          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-center">
+            <p className="text-sm font-medium text-red-800">
+              Authentication failed
+            </p>
+            <p className="mt-1 text-xs text-red-600">
+              Something went wrong during sign in. Please try again.
+            </p>
+          </div>
+        )}
+
         {/* Header */}
         <div className="text-center">
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
@@ -81,5 +124,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }
