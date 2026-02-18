@@ -22,9 +22,16 @@ function LoginForm() {
     try {
       const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
       const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
       if (!url || !key) {
         console.error("Supabase env vars not available on client.");
+        alert("Configuration error — please contact the administrator.");
+        return;
+      }
+
+      if (!siteUrl) {
+        console.error("NEXT_PUBLIC_SITE_URL not available on client.");
         alert("Configuration error — please contact the administrator.");
         return;
       }
@@ -34,7 +41,10 @@ function LoginForm() {
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          // CRITICAL: Always use NEXT_PUBLIC_SITE_URL, never window.location.origin.
+          // This ensures the redirect URL always matches the Supabase config,
+          // preventing www/non-www mismatches that break the PKCE code verifier cookie.
+          redirectTo: `${siteUrl}/auth/callback`,
           queryParams: {
             access_type: "offline",
             prompt: "consent",

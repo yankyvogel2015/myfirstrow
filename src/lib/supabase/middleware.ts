@@ -48,6 +48,33 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
+  // --- STEP 1: Handle stray OAuth codes FIRST (before any session checks) ---
+  // If an OAuth code arrives at the wrong URL (e.g. due to Supabase Site URL fallback,
+  // www/non-www mismatch, or Cloudflare redirect), forward it to /auth/callback
+  // immediately so the PKCE code exchange can happen.
+  const isCallbackRoute = request.nextUrl.pathname.startsWith("/auth/callback");
+  if (!isCallbackRoute) {
+    const authCode = request.nextUrl.searchParams.get("code");
+    if (authCode) {
+      const callbackUrl = new URL("/auth/callback", request.url);
+      callbackUrl.searchParams.set("code", authCode);
+      // Preserve "next" param if present, otherwise don't add extra params
+      const next = request.nextUrl.searchParams.get("next");
+      if (next) callbackUrl.searchParams.set("next", next);
+      return NextResponse.redirect(callbackUrl);
+    }
+  }
+
+  // --- STEP 2: Public route check ---
+  const isPublicRoute =
+    request.nextUrl.pathname === "/login" || isCallbackRoute;
+
+  // Let /auth/callback through immediately — no session check needed
+  if (isCallbackRoute) {
+    return supabaseResponse;
+  }
+
+  // --- STEP 3: Validate session server-side ---
   // IMPORTANT: Do NOT use supabase.auth.getSession() here.
   // getUser() validates the token server-side with Supabase Auth.
   // getSession() only reads the JWT without validation — insecure for middleware.
@@ -55,25 +82,17 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Public routes that don't require authentication
-  const isPublicRoute =
-    request.nextUrl.pathname === "/login" ||
-    request.nextUrl.pathname.startsWith("/auth/callback");
-
   // If not logged in and trying to access ANY non-public route → redirect to login
   if (!user && !isPublicRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    // Preserve the original destination so we can redirect back after login
-    url.searchParams.set("redirect", request.nextUrl.pathname);
-    return NextResponse.redirect(url);
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("redirect", request.nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
   // If logged-in user visits /login, redirect to dashboard
   if (user && request.nextUrl.pathname === "/login") {
-    const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
+    const dashboardUrl = new URL("/dashboard", request.url);
+    return NextResponse.redirect(dashboardUrl);
   }
 
   return supabaseResponse;
