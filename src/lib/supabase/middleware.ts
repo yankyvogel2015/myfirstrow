@@ -55,10 +55,13 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protected route check: redirect unauthenticated users to login
-  const isProtectedRoute = request.nextUrl.pathname.startsWith("/dashboard");
+  // Public routes that don't require authentication
+  const isPublicRoute =
+    request.nextUrl.pathname === "/login" ||
+    request.nextUrl.pathname.startsWith("/auth/callback");
 
-  if (!user && isProtectedRoute) {
+  // If not logged in and trying to access ANY non-public route → redirect to login
+  if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     // Preserve the original destination so we can redirect back after login

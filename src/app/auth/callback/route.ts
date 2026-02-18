@@ -51,21 +51,11 @@ export async function GET(request: Request) {
       }
       // --- END ALLOWLIST ---
 
-      // Construct absolute URL for redirect
-      const forwardedHost = request.headers.get("x-forwarded-host");
-      const isLocalEnv = process.env.NODE_ENV === "development";
-
-      if (isLocalEnv) {
-        // In development, redirect to localhost
-        return NextResponse.redirect(`${origin}${redirectTo}`);
-      } else if (forwardedHost) {
-        // In production behind a proxy (Cloudflare/Vercel), use forwarded host
-        return NextResponse.redirect(
-          `https://${forwardedHost}${redirectTo}`
-        );
-      } else {
-        return NextResponse.redirect(`${origin}${redirectTo}`);
-      }
+      // Redirect to dashboard after successful login
+      // Use NEXT_PUBLIC_SITE_URL for reliable redirects behind Cloudflare/Vercel proxy
+      const siteUrl =
+        process.env.NEXT_PUBLIC_SITE_URL || origin;
+      return NextResponse.redirect(`${siteUrl}${redirectTo}`);
     }
   }
 
