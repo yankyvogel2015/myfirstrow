@@ -19,6 +19,13 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  // Determine role: admin if email is in ALLOWED_EMAILS, otherwise Starter
+  const allowedEmails = process.env.ALLOWED_EMAILS;
+  const isAdmin = allowedEmails
+    ?.split(",")
+    .map((e) => e.trim().toLowerCase())
+    .includes(user.email?.toLowerCase() ?? "");
+
   return (
     <div>
       {/* Header */}
@@ -52,7 +59,9 @@ export default async function DashboardPage() {
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Plan</p>
-              <p className="text-sm font-medium text-foreground">Starter</p>
+              <p className="text-sm font-medium text-foreground">
+                {isAdmin ? "Admin" : "Starter"}
+              </p>
             </div>
           </div>
         </div>
